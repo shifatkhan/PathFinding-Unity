@@ -55,7 +55,7 @@ public class Unit : MonoBehaviour
             {
                 // Draw nodes.
                 Gizmos.color = Color.black;
-                Gizmos.DrawCube(path[i], Vector3.one);
+                Gizmos.DrawCube(path[i], Vector3.one * 0.5f);
 
                 // Draw lines.
                 if(i == targetIndex)

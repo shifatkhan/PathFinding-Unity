@@ -108,7 +108,7 @@ public class Grid : MonoBehaviour
             // Draw tiles.
             foreach (Node node in grid)
             {
-                // WHITE = Walkable, RED = Unwalkable, BLACK = path
+                // WHITE = Walkable, RED = Unwalkable
                 Gizmos.color = (node.walkable) ? Color.white : Color.red;
 
                 Gizmos.DrawCube(node.worldPosition, Vector3.one * (nodeDiameter - 0.1f));

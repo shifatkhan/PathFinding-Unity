@@ -10,8 +10,8 @@ public class Node : IHeapItem<Node>
     public int gridX;
     public int gridY;
 
-    public int gCost; // Traversed cost - distance from start node.
-    public int hCost; // Heuristic cost - distance from end node.
+    public float gCost; // Traversed cost - distance from start node.
+    public float hCost; // Heuristic cost - distance from end node.
 
     public Node parent;
 
@@ -29,7 +29,7 @@ public class Node : IHeapItem<Node>
     /// Get the total cost , f cost
     /// </summary>
     /// <returns></returns>
-    public int fCost
+    public float fCost
     {
         get { return gCost + hCost; }
     }
