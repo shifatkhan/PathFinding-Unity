@@ -19,6 +19,16 @@ public class Unit : MonoBehaviour
         if (pathSuccessful)
         {
             path = newPath;
+
+            int pathLength = path.Length;
+            float totalLength = 0;
+            for (int i = 0; i < pathLength-1; i++)
+            {
+                totalLength += (path[i + 1] - path[i]).magnitude;
+            }
+
+            Debug.Log($"Total path length = {totalLength}");
+
             StopCoroutine("FollowPath");
             StartCoroutine("FollowPath");
         }
@@ -54,8 +64,8 @@ public class Unit : MonoBehaviour
             for (int i = targetIndex; i < path.Length; i++)
             {
                 // Draw nodes.
-                Gizmos.color = Color.black;
-                Gizmos.DrawCube(path[i], Vector3.one * 0.5f);
+                Gizmos.color = Color.white;
+                Gizmos.DrawSphere(path[i], 0.5f);
 
                 // Draw lines.
                 if(i == targetIndex)

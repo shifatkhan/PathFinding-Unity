@@ -14,6 +14,7 @@ public class Node : IHeapItem<Node>
     public float hCost; // Heuristic cost - distance from end node.
 
     public Node parent;
+    //public Node[] neighbours;
 
     int heapIndex;
 
@@ -47,6 +48,11 @@ public class Node : IHeapItem<Node>
         if(compare == 0)
         {
             compare = hCost.CompareTo(nodeToCompare.hCost);
+        }
+
+        if (compare == 0)
+        {
+            compare = gCost.CompareTo(nodeToCompare.gCost);
         }
 
         return -compare;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Grid : MonoBehaviour
 {
     [SerializeField]
-    private bool displayGridGizmos;
+    private bool displayGridGizmos = false;
 
     public LayerMask unwalkable;
     public Vector2 gridWorldSize;
@@ -37,7 +37,7 @@ public class Grid : MonoBehaviour
         grid = new Node[gridSizeX, gridSizeY];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridSizeY / 2;
 
-        // Check for collision with unwalkable objects.
+        // Create nodes and Check for collision with unwalkable objects.
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)

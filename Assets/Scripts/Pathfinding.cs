@@ -7,6 +7,17 @@ using UnityEngine;
 [RequireComponent(typeof(PathRequestManager))]
 public class Pathfinding : MonoBehaviour
 {
+    // Enum to keep track of which Heuristics we are using.
+    public enum Heuristic
+    {
+        DIJKSTRA,
+        EUCLIDEAN,
+        CLUSTER
+    }
+
+    [SerializeField] 
+    private Heuristic heuristic = Heuristic.EUCLIDEAN;
+
     PathRequestManager requestManager;
 
     Grid grid;
@@ -27,18 +38,18 @@ public class Pathfinding : MonoBehaviour
 
     IEnumerator FindPathAstar(Vector3 startPos, Vector3 targetPos)
     {
-        // DEBUG
-        //Stopwatch sw = new Stopwatch();
-        //sw.Start();
-
         Vector3[] wayPoints = new Vector3[0];
         bool pathSuccess = false;
 
+        // Initialize vars.
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
+        startNode.parent = startNode;
 
-        startNode.hCost = EuclideanDistanceHeuristic(startNode, targetNode);
+        if (heuristic != Heuristic.DIJKSTRA)
+            startNode.hCost = HeuristicDistance(startNode, targetNode);
 
+        // Check if we can even reach the target node.
         if (startNode.walkable && targetNode.walkable)
         {
             // This list is used for showing the visited nodes.
@@ -61,10 +72,6 @@ public class Pathfinding : MonoBehaviour
                 // Check if we reached goal and terminate.
                 if (currentNode == targetNode)
                 {
-                    // DEBUG
-                    //sw.Stop();
-                    //print($"Path found: {sw.ElapsedMilliseconds} ms");
-
                     pathSuccess = true;
                     break;
                 }
@@ -77,13 +84,16 @@ public class Pathfinding : MonoBehaviour
                         continue;
 
                     openListNodes.Add(neighbour);
-                    float newCostToNeighbour = currentNode.gCost + EuclideanDistanceHeuristic(currentNode, neighbour);
+                    float newCostToNeighbour = currentNode.gCost + HeuristicDistance(currentNode, neighbour);
 
                     // Check if we found a shorter path to this neighbour.
                     if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
                         neighbour.gCost = newCostToNeighbour;
-                        neighbour.hCost = EuclideanDistanceHeuristic(neighbour, targetNode);
+
+                        if(heuristic != Heuristic.DIJKSTRA)
+                            neighbour.hCost = HeuristicDistance(neighbour, targetNode);
+
                         neighbour.parent = currentNode; // To retrace path.
 
                         // Add neighbour to openSet.
@@ -144,6 +154,33 @@ public class Pathfinding : MonoBehaviour
         return waypoints.ToArray();
     }
 
+    private float HeuristicDistance(Node nodeA, Node nodeB)
+    {
+        switch (heuristic)
+        {
+            case Heuristic.DIJKSTRA:
+            case Heuristic.EUCLIDEAN:
+                return EuclideanDistanceHeuristic(nodeA, nodeB);
+            case Heuristic.CLUSTER:
+                return ClusterHeuristic(nodeA, nodeB);
+        }
+
+        UnityEngine.Debug.LogError("Invalid Heuristic.");
+        return -1;
+    }
+
+    /// <summary>
+    /// We use Euclidean distance to calculate the distance between 2 nodes.
+    /// 
+    /// </summary>
+    /// <param name="nodeA">Origin node</param>
+    /// <param name="nodeB">Target node</param>
+    /// <returns>Distance between nodes.</returns>
+    public static float EuclideanDistanceHeuristic(Node nodeA, Node nodeB)
+    {
+        return Mathf.Sqrt(Mathf.Pow(nodeA.worldPosition.x - nodeB.worldPosition.x, 2) + Mathf.Pow(nodeA.worldPosition.z - nodeB.worldPosition.z, 2));
+    }
+
     /// <summary>
     /// We set diagonal nodes to have a distance of 14, and perpendicular nodes to be 10.
     /// This is because we set our nodes to be 1 unit apart from each other.
@@ -154,7 +191,8 @@ public class Pathfinding : MonoBehaviour
     /// <param name="nodeA">Origin node</param>
     /// <param name="nodeB">Target node</param>
     /// <returns>Distance between nodes.</returns>
-    private float EuclideanDistanceHeuristic(Node nodeA, Node nodeB)
+    [System.Obsolete("This function was replaced by a more precise function: EuclideanDistanceHeuristic")]
+    public static float EuclideanDistanceHeuristic2(Node nodeA, Node nodeB)
     {
         int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
         int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
@@ -165,16 +203,9 @@ public class Pathfinding : MonoBehaviour
         return 14 * dstX + 10 * (dstY - dstX);
     }
 
-    /// <summary>
-    /// We use Euclidean distance to calculate the distance between 2 nodes.
-    /// 
-    /// </summary>
-    /// <param name="nodeA">Origin node</param>
-    /// <param name="nodeB">Target node</param>
-    /// <returns>Distance between nodes.</returns>
-    private float EuclideanDistanceHeuristic2(Node nodeA, Node nodeB)
+    public static float ClusterHeuristic(Node nodeA, Node nodeB)
     {
-        return Mathf.Sqrt(Mathf.Pow(nodeA.gridX - nodeB.gridX, 2) + Mathf.Pow(nodeA.gridY - nodeB.gridY, 2));
+        return 0;
     }
 
     private void OnDrawGizmos()
