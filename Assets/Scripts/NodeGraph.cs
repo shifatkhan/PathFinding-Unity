@@ -16,18 +16,15 @@ public class NodeGraph : MonoBehaviour
     private bool displayGridGizmos = false;
 
     [Header("Graph")]
-    [SerializeField]
-    private LayerMask unwalkableLayer;
-    [SerializeField]
-    private GraphType graphType = GraphType.GRID;
+    public LayerMask unwalkableLayer;
+    public GraphType graphType = GraphType.GRID;
     public Vector2 gridWorldSize;
 
     [Header("Node")]
     public float nodeRadius;
     Node[,] grid;
 
-    [SerializeField]
-    private List<Node> povGrid;
+    public List<Node> povGrid;
 
     float nodeDiameter;
     int gridSizeX;
@@ -43,7 +40,17 @@ public class NodeGraph : MonoBehaviour
 
     public int MaxSize
     {
-        get { return gridSizeX * gridSizeY; }
+        get 
+        {
+            int size = -1;
+
+            if (graphType == GraphType.GRID)
+                size = gridSizeX * gridSizeY;
+            else if (graphType == GraphType.POV)
+                size = povGrid.Count;
+            
+            return size;
+        }
     }
 
     /// <summary>
@@ -153,8 +160,6 @@ public class NodeGraph : MonoBehaviour
             float currDistance = Mathf.Infinity;
             int gridLength = povGrid.Count;
 
-            Debug.Log($"WORLDPOS: {worldPosition}");
-
             // Search for the closes Node. O(n)
             for (int i = 0; i < gridLength; i++)
             {
@@ -166,8 +171,6 @@ public class NodeGraph : MonoBehaviour
                 }
             }
         }
-
-        Debug.Log($"Return node: {nodeAtPosition.name}");
         return nodeAtPosition;
     }
 }

@@ -20,15 +20,32 @@ public class Node : MonoBehaviour, IHeapItem<Node>
 
     public Node parent;
     public List<Node> neighbours;
+    private NodeGraph nodeGraph;
 
     int heapIndex;
 
+    [System.Obsolete("We converted this class into a Monobehaviour. We do not need a constructor anymore.", true)]
     public Node(bool walkable, Vector3 worldPosition, int gridX, int gridY)
     {
         this.walkable = walkable;
         this.worldPosition = worldPosition;
         this.gridX = gridX;
         this.gridY = gridY;
+    }
+
+    private void Awake()
+    {
+        nodeGraph = GameObject.FindGameObjectWithTag("Tile Manager").GetComponent<NodeGraph>();
+        if (nodeGraph.graphType == NodeGraph.GraphType.POV)
+        {
+            SetWorldPosition();
+            FindPOVNeighbours();
+        }
+    }
+
+    private void Update()
+    {
+        
     }
 
     /// <summary>
@@ -44,6 +61,32 @@ public class Node : MonoBehaviour, IHeapItem<Node>
     {
         get => heapIndex;
         set => heapIndex = value;
+    }
+
+    public void SetWorldPosition()
+    {
+        worldPosition = transform.position;
+    }
+
+    /// <summary>
+    /// Automatically setup neighbours using raycasting.
+    /// </summary>
+    public void FindPOVNeighbours()
+    {
+        int graphLength = nodeGraph.povGrid.Count;
+
+        for (int i = 0; i < graphLength; i++)
+        {
+            // Skip self.
+            if (this == nodeGraph.povGrid[i])
+                continue;
+
+            RaycastHit hit;
+            if (!Physics.Linecast(transform.position, nodeGraph.povGrid[i].worldPosition, out hit, layerMask: nodeGraph.unwalkableLayer))
+            {
+                neighbours.Add(nodeGraph.povGrid[i]);
+            }
+        }
     }
 
     public int CompareTo(Node nodeToCompare)

@@ -33,10 +33,10 @@ public class Pathfinding : MonoBehaviour
 
     public void StartFindPath(Vector3 startPos, Vector3 targetPos)
     {
-        StartCoroutine(FindPathAstar(startPos, targetPos));
+        StartCoroutine(FindPath(startPos, targetPos));
     }
 
-    IEnumerator FindPathAstar(Vector3 startPos, Vector3 targetPos)
+    IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
     {
         Vector3[] wayPoints = new Vector3[0];
         bool pathSuccess = false;
@@ -78,9 +78,11 @@ public class Pathfinding : MonoBehaviour
 
                 // Otherwise, loop through neighbours.
                 if (currentNode.neighbours == null || currentNode.neighbours.Count == 0)
+                {
                     currentNode.neighbours = grid.GetNeighbours(currentNode);
+                }
 
-                foreach (Node neighbour in grid.GetNeighbours(currentNode))
+                foreach (Node neighbour in currentNode.neighbours)
                 {
                     // Skip node if it is not walkable (e.g. a wall) or if it's in closed set.
                     if (!neighbour.walkable || closedSet.Contains(neighbour))
@@ -96,7 +98,7 @@ public class Pathfinding : MonoBehaviour
 
                         if(heuristic != Heuristic.DIJKSTRA)
                             neighbour.hCost = HeuristicDistance(neighbour, targetNode);
-
+                        
                         neighbour.parent = currentNode; // To retrace path.
 
                         // Add neighbour to openSet.
@@ -139,22 +141,39 @@ public class Pathfinding : MonoBehaviour
 
     private Vector3[] SimplifyPath(List<Node> path)
     {
-        List<Vector3> waypoints = new List<Vector3>();
-        Vector2 directionOld = Vector2.zero;
-
-        int pathLength = path.Count;
-        for (int i = 1; i < pathLength; i++)
+        if(grid.graphType == NodeGraph.GraphType.GRID)
         {
-            Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
-            if(directionNew != directionOld)
+            List<Vector3> waypoints = new List<Vector3>();
+            Vector2 directionOld = Vector2.zero;
+
+            int pathLength = path.Count;
+            for (int i = 1; i < pathLength; i++)
             {
-                waypoints.Add(path[i].worldPosition);
+                Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
+                if (directionNew != directionOld)
+                {
+                    waypoints.Add(path[i].worldPosition);
+                }
+
+                directionOld = directionNew;
             }
 
-            directionOld = directionNew;
+            return waypoints.ToArray();
+        }
+        else if (grid.graphType == NodeGraph.GraphType.POV)
+        {
+            int pathLength = path.Count;
+            Vector3[] waypoints = new Vector3[pathLength];
+
+            for (int i = 0; i < pathLength; i++)
+            {
+                waypoints[i] = path[i].worldPosition;
+            }
+
+            return waypoints;
         }
 
-        return waypoints.ToArray();
+        return null;
     }
 
     private float HeuristicDistance(Node nodeA, Node nodeB)
