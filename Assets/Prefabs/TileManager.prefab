@@ -45,12 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832c746b3b78d6843951714ce4737c6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nodePrefab: {fileID: 2738567410781722385, guid: 6259b1f5d72943b419c49da423e20888, type: 3}
   displayGridGizmos: 0
-  unwalkable:
+  unwalkableLayer:
     serializedVersion: 2
     m_Bits: 256
   gridWorldSize: {x: 40, y: 30}
   nodeRadius: 0.5
+  povGrid: []
 --- !u!114 &1415676453387867855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00cbdd3d2c6a7d145b601e097196fd09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heuristic: 0
+  heuristic: 1
 --- !u!114 &1415676453387867840
 MonoBehaviour:
   m_ObjectHideFlags: 0

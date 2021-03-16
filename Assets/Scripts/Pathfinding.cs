@@ -20,7 +20,7 @@ public class Pathfinding : MonoBehaviour
 
     PathRequestManager requestManager;
 
-    Grid grid;
+    NodeGraph grid;
 
     private List<Node> openListNodes = new List<Node>();
     private List<Node> closedListNodes = new List<Node>();
@@ -28,7 +28,7 @@ public class Pathfinding : MonoBehaviour
     private void Awake()
     {
         requestManager = GetComponent<PathRequestManager>();
-        grid = GetComponent<Grid>();
+        grid = GetComponent<NodeGraph>();
     }
 
     public void StartFindPath(Vector3 startPos, Vector3 targetPos)
@@ -77,6 +77,9 @@ public class Pathfinding : MonoBehaviour
                 }
 
                 // Otherwise, loop through neighbours.
+                if (currentNode.neighbours == null || currentNode.neighbours.Count == 0)
+                    currentNode.neighbours = grid.GetNeighbours(currentNode);
+
                 foreach (Node neighbour in grid.GetNeighbours(currentNode))
                 {
                     // Skip node if it is not walkable (e.g. a wall) or if it's in closed set.

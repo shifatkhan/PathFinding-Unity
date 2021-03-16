@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node : IHeapItem<Node>
+public class Node : MonoBehaviour, IHeapItem<Node>
 {
+    public bool displayGizmos;
+    public float gizmoSize = 0.9f;
     public bool walkable;
+
+    [Header("Coordinates")]
     public Vector3 worldPosition;
 
     public int gridX;
     public int gridY;
 
+    [Header("Pathfinding")]
     public float gCost; // Traversed cost - distance from start node.
     public float hCost; // Heuristic cost - distance from end node.
 
     public Node parent;
-    //public Node[] neighbours;
+    public List<Node> neighbours;
 
     int heapIndex;
 
@@ -56,5 +61,32 @@ public class Node : IHeapItem<Node>
         }
 
         return -compare;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (displayGizmos)
+        {
+            if (walkable)
+            {
+                Gizmos.color = Color.white;
+
+                if (neighbours != null)
+                {
+                    int neighboursLength = neighbours.Count;
+                    for (int i = 0; i < neighboursLength; i++)
+                    {
+                        if (neighbours[i] != null && neighbours[i].walkable)
+                            Gizmos.DrawLine(worldPosition, neighbours[i].worldPosition);
+                    }
+                }
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+            }
+
+            Gizmos.DrawCube(worldPosition, new Vector3(gizmoSize, 0.2f, gizmoSize));
+        }
     }
 }
