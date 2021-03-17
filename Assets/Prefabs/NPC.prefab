@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 759230012115413732}
   - component: {fileID: 759230012115413723}
   - component: {fileID: 759230012115413735}
+  - component: {fileID: -4025228759483828764}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Player
@@ -207,3 +208,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   speed: 5
+  arrivalDistance: 1.5
+--- !u!114 &-4025228759483828764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759230012115413722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e418e1faf4bf49408d5d67c83ba520f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableGizmos: 0
+  flee: 0
+  target: {x: 0, y: 0, z: 0}
+  stats: {fileID: 11400000, guid: 75e64dcbdfd242149844f21f7dba8147, type: 2}
+  steeringAtStart: 1

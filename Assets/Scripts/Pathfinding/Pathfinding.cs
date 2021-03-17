@@ -11,8 +11,7 @@ public class Pathfinding : MonoBehaviour
     public enum Heuristic
     {
         DIJKSTRA,
-        EUCLIDEAN,
-        CLUSTER
+        EUCLIDEAN
     }
 
     [SerializeField] 
@@ -183,8 +182,8 @@ public class Pathfinding : MonoBehaviour
             case Heuristic.DIJKSTRA:
             case Heuristic.EUCLIDEAN:
                 return EuclideanDistanceHeuristic(nodeA, nodeB);
-            case Heuristic.CLUSTER:
-                return ClusterHeuristic(nodeA, nodeB);
+            //case Heuristic.CLUSTER:
+            //    return ClusterHeuristic(nodeA, nodeB);
         }
 
         UnityEngine.Debug.LogError("Invalid Heuristic.");
@@ -227,6 +226,7 @@ public class Pathfinding : MonoBehaviour
 
     public static float ClusterHeuristic(Node nodeA, Node nodeB)
     {
+        // TODO
         return 0;
     }
 

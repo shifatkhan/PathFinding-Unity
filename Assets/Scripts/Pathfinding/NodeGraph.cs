@@ -9,6 +9,7 @@ public class NodeGraph : MonoBehaviour
         GRID,
         POV
     }
+    public bool usingClusters = false;
 
     [SerializeField]
     private GameObject nodePrefab;
@@ -25,6 +26,7 @@ public class NodeGraph : MonoBehaviour
     Node[,] grid;
 
     public List<Node> povGrid;
+    public List<Node> clusters;
 
     float nodeDiameter;
     int gridSizeX;

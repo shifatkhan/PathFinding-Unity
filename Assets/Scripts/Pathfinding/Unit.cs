@@ -8,6 +8,14 @@ public class Unit : MonoBehaviour
     [SerializeField] private float speed = 10;
     Vector3[] path;
     int targetIndex;
+    public float arrivalDistance = 1f;
+
+    private NPC npc;
+
+    private void Awake()
+    {
+        npc = GetComponent<NPC>();
+    }
 
     private void Start()
     {
@@ -40,7 +48,7 @@ public class Unit : MonoBehaviour
 
         while (true)
         {
-            if(transform.position == currentWaypoint)
+            if((currentWaypoint - transform.position).magnitude <= arrivalDistance)
             {
                 targetIndex++;
                 if (targetIndex >= path.Length)
@@ -51,7 +59,8 @@ public class Unit : MonoBehaviour
                 currentWaypoint = path[targetIndex];
             }
 
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            //transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            npc.SetTarget(currentWaypoint);
             yield return null;
         }
     }
